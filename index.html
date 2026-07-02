@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Type Foundry Directory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F5F3EE;
+    --ink: #161412;
+    --ink-soft: #57524B;
+    --meta: #8A857C;
+    --line: #DDD9D0;
+    --red: #D93A1E;
+    --serif: "Instrument Serif", Georgia, serif;
+    --sans: "Instrument Sans", -apple-system, sans-serif;
+    --mono: "SF Mono", ui-monospace, Menlo, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; animation: none !important; } }
+  body { background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 15px; line-height: 1.5; }
+  a { color: inherit; }
+
+  /* ---- alphabet index rail ---- */
+  #rail {
+    position: fixed; left: 0; top: 0; bottom: 0; width: 58px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    border-right: 1px solid var(--line); background: var(--paper); z-index: 20;
+    overflow: hidden;
+  }
+  #rail a {
+    font-family: var(--serif); font-style: italic; font-size: 15px;
+    line-height: 1.55; color: var(--meta); text-decoration: none;
+    width: 100%; text-align: center;
+    transition: color .12s, font-size .12s;
+  }
+  #rail a:hover, #rail a:focus-visible { color: var(--red); font-size: 21px; }
+  #rail a.active { color: var(--ink); font-size: 21px; }
+
+  /* ---- masthead ---- */
+  #wrap { margin-left: 58px; }
+  header {
+    padding: 56px 56px 0;
+    border-bottom: 1px solid var(--ink);
+  }
+  .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--meta); }
+  h1 {
+    font-family: var(--serif); font-weight: 400; font-style: italic;
+    font-size: clamp(44px, 7vw, 92px); letter-spacing: -0.015em; line-height: 1.02;
+    margin: 10px 0 26px;
+  }
+  h1 em { font-style: normal; }
+  .toolbar {
+    display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+    padding: 14px 0; border-top: 1px solid var(--line);
+  }
+  #search {
+    flex: 1; min-width: 200px; max-width: 380px;
+    background: transparent; border: 0; border-bottom: 1px solid var(--line);
+    font-family: var(--sans); font-size: 15px; color: var(--ink);
+    padding: 6px 2px; outline: none;
+  }
+  #search::placeholder { color: var(--meta); font-style: italic; font-family: var(--serif); }
+  #search:focus { border-bottom-color: var(--red); }
+  #meta { font-family: var(--mono); font-size: 11.5px; color: var(--meta); margin-left: auto; }
+  #refresh {
+    font-family: var(--sans); font-weight: 600; font-size: 13.5px; letter-spacing: .02em;
+    color: var(--paper); background: var(--ink); border: 1px solid var(--ink);
+    padding: 9px 22px; border-radius: 2px; cursor: pointer;
+    transition: background .15s, border-color .15s;
+  }
+  #refresh:hover:not(:disabled) { background: var(--red); border-color: var(--red); }
+  #refresh:disabled { opacity: .45; cursor: wait; }
+
+  /* ---- sections ---- */
+  main { padding: 0 56px 120px; }
+  section { scroll-margin-top: 8px; }
+  .letter-row {
+    display: flex; align-items: baseline; gap: 24px;
+    border-bottom: 1px solid var(--line); margin-top: 72px; padding-bottom: 4px;
+  }
+  .letter {
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+    font-size: clamp(96px, 12vw, 180px); line-height: .82; letter-spacing: -0.02em;
+  }
+  .letter-count { font-family: var(--mono); font-size: 11.5px; color: var(--meta); }
+
+  /* ---- cards ---- */
+  .grid {
+    display: grid; gap: 32px 24px; margin-top: 32px;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+  .card { display: block; text-decoration: none; }
+  .frame {
+    border: 1px solid var(--line); background: #fff;
+    aspect-ratio: 16 / 10; overflow: hidden;
+    transition: border-color .15s;
+  }
+  .frame img {
+    width: 100%; height: 100%; object-fit: cover; object-position: top;
+    display: block; filter: saturate(.92);
+    transition: transform .35s cubic-bezier(.2,.7,.2,1), filter .2s;
+  }
+  .card:hover .frame, .card:focus-visible .frame { border-color: var(--ink); }
+  .frame.placeholder {
+    display: flex; align-items: center; justify-content: center;
+    background: var(--paper);
+  }
+  .frame.placeholder span {
+    font-family: var(--serif); font-style: italic; font-size: 72px;
+    line-height: 1; color: var(--line); transition: color .15s;
+  }
+  .card:hover .frame.placeholder span { color: var(--red); }
+  .card:hover .frame img { transform: scale(1.03); filter: saturate(1); }
+  .card-line {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 10px;
+    margin-top: 9px;
+  }
+  .card-name {
+    font-weight: 500; font-size: 14.5px; letter-spacing: -0.005em;
+    border-bottom: 1px solid transparent; transition: border-color .12s, color .12s;
+  }
+  .card:hover .card-name { color: var(--red); border-bottom-color: var(--red); }
+  .card-founded { font-family: var(--mono); font-size: 11px; color: var(--meta); white-space: nowrap; }
+  .card-country { font-size: 12px; color: var(--meta); margin-top: 1px; }
+
+  #status { padding: 90px 0; font-family: var(--serif); font-style: italic; font-size: 22px; color: var(--meta); }
+
+  /* ---- detail panel ---- */
+  #scrim {
+    position: fixed; inset: 0; background: rgb(22 20 18 / .45); z-index: 40;
+    opacity: 0; pointer-events: none; transition: opacity .2s;
+  }
+  #panel {
+    position: fixed; top: 0; right: 0; bottom: 0; z-index: 50;
+    width: min(460px, 100vw); background: var(--paper);
+    border-left: 1px solid var(--ink);
+    transform: translateX(102%); transition: transform .28s cubic-bezier(.2,.7,.2,1);
+    display: flex; flex-direction: column; overflow-y: auto;
+  }
+  body.panel-open #scrim { opacity: 1; pointer-events: auto; }
+  body.panel-open #panel { transform: none; }
+  #panel .frame { aspect-ratio: 16/10; border: 0; border-bottom: 1px solid var(--line); flex-shrink: 0; }
+  #panel .frame img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+  .panel-body { padding: 26px 30px 34px; display: flex; flex-direction: column; flex: 1; }
+  .panel-name {
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+    font-size: 38px; line-height: 1.05; letter-spacing: -0.01em; margin-bottom: 4px;
+  }
+  .panel-url { font-family: var(--mono); font-size: 11.5px; color: var(--meta); word-break: break-all; margin-bottom: 22px; }
+  .meta-row {
+    display: flex; justify-content: space-between; gap: 16px;
+    padding: 9px 0; border-top: 1px solid var(--line); font-size: 13.5px;
+  }
+  .meta-row dt { color: var(--meta); }
+  .meta-row dd { text-align: right; font-weight: 500; }
+  .panel-actions { margin-top: auto; padding-top: 28px; display: flex; gap: 12px; }
+  #visit {
+    flex: 1; text-align: center; text-decoration: none;
+    font-weight: 600; font-size: 14px; letter-spacing: .02em;
+    color: var(--paper); background: var(--ink); border: 1px solid var(--ink);
+    padding: 13px 20px; border-radius: 2px; transition: background .15s, border-color .15s;
+  }
+  #visit:hover { background: var(--red); border-color: var(--red); }
+  #close-panel {
+    position: absolute; top: 14px; right: 14px; z-index: 2;
+    width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line);
+    background: var(--paper); color: var(--ink); font-size: 15px; cursor: pointer;
+  }
+  #close-panel:hover { border-color: var(--red); color: var(--red); }
+
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+
+  @media (max-width: 720px) {
+    #rail { display: none; }
+    #wrap { margin-left: 0; }
+    header, main { padding-left: 22px; padding-right: 22px; }
+    .letter-row { margin-top: 48px; }
+  }
+</style>
+</head>
+<body>
+<nav id="rail" aria-label="Alphabetical index"></nav>
+<div id="wrap">
+  <header>
+    <p class="eyebrow">An index of independent type foundries · typefoundry.directory</p>
+    <h1>The Foundry <em>Specimen</em></h1>
+    <div class="toolbar">
+      <input id="search" type="search" placeholder="Search by name…" aria-label="Search foundries">
+      <span id="meta"></span>
+    </div>
+  </header>
+  <main id="main"><p id="status">Setting the page…</p></main>
+</div>
+
+<div id="scrim"></div>
+<aside id="panel" role="dialog" aria-modal="true" aria-label="Foundry details">
+  <button id="close-panel" aria-label="Close">✕</button>
+  <div class="frame"><img id="panel-img" alt=""></div>
+  <div class="panel-body">
+    <h2 class="panel-name" id="panel-name"></h2>
+    <p class="panel-url" id="panel-url"></p>
+    <dl id="panel-meta"></dl>
+    <div class="panel-actions">
+      <a id="visit" href="#" target="_blank" rel="noopener">Visit site ↗</a>
+    </div>
+  </div>
+</aside>
+
+<script>
+const $ = s => document.querySelector(s);
+let all = [];
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const countryName = s => s ? s.split(' ').map(w => w[0].toUpperCase() + w.slice(1)).join(', ').replace(/-/g, ' ') : '';
+const placeholder = name => `<div class="frame placeholder"><span>${esc((name[0] || '?').toLowerCase())}${esc(name[0] || '?')}</span></div>`;
+function imgFallback(img) {
+  if (img.dataset.full && img.src !== img.dataset.full) { img.src = img.dataset.full; return; }
+  const name = img.alt.replace(/ website$/, '');
+  img.closest('.frame').outerHTML = placeholder(name);
+}
+
+function render(list) {
+  const groups = {};
+  for (const f of list) {
+    const c = (f.sort[0] || '#').toUpperCase();
+    (groups[/[A-Z]/.test(c) ? c : '0–9'] ||= []).push(f);
+  }
+  const letters = Object.keys(groups).sort((a, b) => (a === '0–9' ? '0' : a).localeCompare(b === '0–9' ? '0' : b));
+
+  $('#rail').innerHTML = letters.map(l =>
+    `<a href="#sec-${l === '0–9' ? 'num' : l}">${l === '0–9' ? '№' : l.toLowerCase()}</a>`).join('');
+
+  $('#main').innerHTML = list.length ? letters.map(l => `
+    <section id="sec-${l === '0–9' ? 'num' : l}">
+      <div class="letter-row">
+        <span class="letter">${l === '0–9' ? '0–9' : l.toLowerCase() + l}</span>
+        <span class="letter-count">${groups[l].length} ${groups[l].length === 1 ? 'foundry' : 'foundries'}</span>
+      </div>
+      <div class="grid">${groups[l].map(f => `
+        <a class="card" href="#" data-idx="${all.indexOf(f)}">
+          ${f.thumb ? `<div class="frame">
+            <img loading="lazy" src="${esc(f.thumb)}" alt="${esc(f.name)} website"
+                 onerror="imgFallback(this)" data-full="${esc(f.thumb_full)}">
+          </div>` : placeholder(f.name)}
+          <div class="card-line">
+            <span class="card-name">${esc(f.name)}</span>
+            ${f.founded ? `<span class="card-founded">est. ${esc(f.founded)}</span>` : ''}
+          </div>
+          ${f.countries ? `<div class="card-country">${esc(countryName(f.countries))}</div>` : ''}
+        </a>`).join('')}
+      </div>
+    </section>`).join('')
+  : `<p id="status">No foundries match. Clear the search to see all ${all.length}.</p>`;
+
+  observeSections();
+}
+
+let observer;
+function observeSections() {
+  observer?.disconnect();
+  observer = new IntersectionObserver(entries => {
+    for (const e of entries) if (e.isIntersecting) {
+      document.querySelectorAll('#rail a').forEach(a =>
+        a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id));
+    }
+  }, { rootMargin: '-10% 0px -80% 0px' });
+  document.querySelectorAll('section').forEach(s => observer.observe(s));
+}
+
+function apply(data) {
+  all = data.foundries || [];
+  $('#meta').textContent = `${all.length} foundries · pulled ${data.pulled_at || '—'}`;
+  render(all);
+}
+
+async function load() {
+  try {
+    const r = await fetch('foundries.json');
+    const data = await r.json();
+    apply(data);
+  } catch (e) {
+    $('#main').innerHTML = `<p id="status">Could not load foundries.json — ${esc(e.message)}</p>`;
+  }
+}
+
+$('#search').oninput = e => {
+  const q = e.target.value.trim().toLowerCase();
+  render(q ? all.filter(f => f.name.toLowerCase().includes(q)) : all);
+};
+load();
+</script>
+</body>
+</html>
