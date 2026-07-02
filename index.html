@@ -130,49 +130,6 @@
 
   #status { padding: 90px 0; font-family: var(--serif); font-style: italic; font-size: 22px; color: var(--meta); }
 
-  /* ---- detail panel ---- */
-  #scrim {
-    position: fixed; inset: 0; background: rgb(22 20 18 / .45); z-index: 40;
-    opacity: 0; pointer-events: none; transition: opacity .2s;
-  }
-  #panel {
-    position: fixed; top: 0; right: 0; bottom: 0; z-index: 50;
-    width: min(460px, 100vw); background: var(--paper);
-    border-left: 1px solid var(--ink);
-    transform: translateX(102%); transition: transform .28s cubic-bezier(.2,.7,.2,1);
-    display: flex; flex-direction: column; overflow-y: auto;
-  }
-  body.panel-open #scrim { opacity: 1; pointer-events: auto; }
-  body.panel-open #panel { transform: none; }
-  #panel .frame { aspect-ratio: 16/10; border: 0; border-bottom: 1px solid var(--line); flex-shrink: 0; }
-  #panel .frame img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
-  .panel-body { padding: 26px 30px 34px; display: flex; flex-direction: column; flex: 1; }
-  .panel-name {
-    font-family: var(--serif); font-style: italic; font-weight: 400;
-    font-size: 38px; line-height: 1.05; letter-spacing: -0.01em; margin-bottom: 4px;
-  }
-  .panel-url { font-family: var(--mono); font-size: 11.5px; color: var(--meta); word-break: break-all; margin-bottom: 22px; }
-  .meta-row {
-    display: flex; justify-content: space-between; gap: 16px;
-    padding: 9px 0; border-top: 1px solid var(--line); font-size: 13.5px;
-  }
-  .meta-row dt { color: var(--meta); }
-  .meta-row dd { text-align: right; font-weight: 500; }
-  .panel-actions { margin-top: auto; padding-top: 28px; display: flex; gap: 12px; }
-  #visit {
-    flex: 1; text-align: center; text-decoration: none;
-    font-weight: 600; font-size: 14px; letter-spacing: .02em;
-    color: var(--paper); background: var(--ink); border: 1px solid var(--ink);
-    padding: 13px 20px; border-radius: 2px; transition: background .15s, border-color .15s;
-  }
-  #visit:hover { background: var(--red); border-color: var(--red); }
-  #close-panel {
-    position: absolute; top: 14px; right: 14px; z-index: 2;
-    width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line);
-    background: var(--paper); color: var(--ink); font-size: 15px; cursor: pointer;
-  }
-  #close-panel:hover { border-color: var(--red); color: var(--red); }
-
   a:focus-visible, button:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
 
   @media (max-width: 720px) {
@@ -197,19 +154,6 @@
   <main id="main"><p id="status">Setting the page…</p></main>
 </div>
 
-<div id="scrim"></div>
-<aside id="panel" role="dialog" aria-modal="true" aria-label="Foundry details">
-  <button id="close-panel" aria-label="Close">✕</button>
-  <div class="frame"><img id="panel-img" alt=""></div>
-  <div class="panel-body">
-    <h2 class="panel-name" id="panel-name"></h2>
-    <p class="panel-url" id="panel-url"></p>
-    <dl id="panel-meta"></dl>
-    <div class="panel-actions">
-      <a id="visit" href="#" target="_blank" rel="noopener">Visit site ↗</a>
-    </div>
-  </div>
-</aside>
 
 <script>
 const $ = s => document.querySelector(s);
@@ -288,51 +232,6 @@ async function load() {
     $('#main').innerHTML = `<p id="status">Could not load foundries.json — ${esc(e.message)}</p>`;
   }
 }
-
-/* ---- detail panel ---- */
-const yn = v => v === 'true' ? 'Yes' : v === 'false' ? 'No' : '';
-const title = s => s ? s.split(/[ -]/).map(w => w[0].toUpperCase() + w.slice(1)).join(' ') : '';
-
-function openPanel(f) {
-  $('#panel .frame').outerHTML = f.thumb_local || f.thumb
-    ? `<div class="frame"><img id="panel-img" src="${f.thumb_local ? live(f.url, 1200) : esc(f.thumb)}" alt="${esc(f.name)} website" onerror="imgFallback(this)" data-full="${esc(f.thumb || '')}"></div>`
-    : placeholder(f.name);
-  $('#panel-name').textContent = f.name;
-  $('#panel-url').textContent = f.url.replace(/^https?:\/\/(www\.)?/, '');
-  $('#visit').href = f.url;
-  const rows = [
-    ['Founded', f.founded],
-    ['Country', countryName(f.countries)],
-    ['Language support', title(f.languages).replace(/ /g, ', ')],
-    ['License type', title(f.license_type)],
-    ['Webfonts', yn(f.webfonts)],
-    ['Variable fonts', yn(f.variable_fonts)],
-    ['Trial fonts', yn(f.trial_fonts)],
-    ['Student discount', yn(f.student_discount)],
-    ['Modifications allowed', yn(f.modifications_allowed)],
-    ['On Adobe Fonts', yn(f.adobe_fonts)],
-    ['On Fontstand', yn(f.fontstand)],
-    ['On Future Fonts', yn(f.future_fonts)],
-  ].filter(([, v]) => v);
-  $('#panel-meta').innerHTML = rows.map(([k, v]) =>
-    `<div class="meta-row"><dt>${k}</dt><dd>${esc(String(v))}</dd></div>`).join('');
-  document.body.classList.add('panel-open');
-  $('#close-panel').focus();
-}
-function closePanel() { document.body.classList.remove('panel-open'); }
-
-$('#main').addEventListener('click', e => {
-  const card = e.target.closest('.card');
-  if (!card) return;
-  // Plain click opens the detail panel; cmd/ctrl/shift-click and middle-click
-  // fall through to the link and open the foundry site in a new tab.
-  if (e.metaKey || e.ctrlKey || e.shiftKey) return;
-  e.preventDefault();
-  openPanel(all[+card.dataset.idx]);
-});
-$('#scrim').onclick = closePanel;
-$('#close-panel').onclick = closePanel;
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closePanel(); });
 
 $('#search').oninput = e => {
   const q = e.target.value.trim().toLowerCase();
