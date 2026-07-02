@@ -244,10 +244,10 @@ function render(list) {
       </div>
       <div class="grid">${groups[l].map(f => `
         <a class="card" href="${esc(f.url)}" target="_blank" rel="noopener" data-idx="${all.indexOf(f)}">
-          <div class="frame">
-            <img loading="lazy" src="${f.thumb_local ? esc(f.thumb_local) : live(f.url, 600)}" alt="${esc(f.name)} website"
+          ${f.thumb_local || f.thumb ? `<div class="frame">
+            <img loading="lazy" src="${esc(f.thumb_local || f.thumb)}" alt="${esc(f.name)} website"
                  onerror="imgFallback(this)" data-full="${esc(f.thumb || '')}">
-          </div>
+          </div>` : placeholder(f.name)}
           <div class="card-line">
             <span class="card-name">${esc(f.name)}</span>
             ${f.founded ? `<span class="card-founded">est. ${esc(f.founded)}</span>` : ''}
@@ -294,8 +294,9 @@ const yn = v => v === 'true' ? 'Yes' : v === 'false' ? 'No' : '';
 const title = s => s ? s.split(/[ -]/).map(w => w[0].toUpperCase() + w.slice(1)).join(' ') : '';
 
 function openPanel(f) {
-  $('#panel .frame').outerHTML =
-    `<div class="frame"><img id="panel-img" src="${live(f.url, 1200)}" alt="${esc(f.name)} website" onerror="imgFallback(this)" data-full="${esc(f.thumb || '')}"></div>`;
+  $('#panel .frame').outerHTML = f.thumb_local || f.thumb
+    ? `<div class="frame"><img id="panel-img" src="${f.thumb_local ? live(f.url, 1200) : esc(f.thumb)}" alt="${esc(f.name)} website" onerror="imgFallback(this)" data-full="${esc(f.thumb || '')}"></div>`
+    : placeholder(f.name);
   $('#panel-name').textContent = f.name;
   $('#panel-url').textContent = f.url.replace(/^https?:\/\/(www\.)?/, '');
   $('#visit').href = f.url;
