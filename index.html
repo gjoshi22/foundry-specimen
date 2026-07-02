@@ -245,7 +245,7 @@ function render(list) {
       <div class="grid">${groups[l].map(f => `
         <a class="card" href="${esc(f.url)}" target="_blank" rel="noopener" data-idx="${all.indexOf(f)}">
           <div class="frame">
-            <img loading="lazy" src="${live(f.url, 600)}" alt="${esc(f.name)} website"
+            <img loading="lazy" src="${f.thumb_local ? esc(f.thumb_local) : live(f.url, 600)}" alt="${esc(f.name)} website"
                  onerror="imgFallback(this)" data-full="${esc(f.thumb || '')}">
           </div>
           <div class="card-line">
