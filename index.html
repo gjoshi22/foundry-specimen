@@ -216,6 +216,8 @@ const $ = s => document.querySelector(s);
 let all = [];
 const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const countryName = s => s ? s.split(' ').map(w => w[0].toUpperCase() + w.slice(1)).join(', ').replace(/-/g, ' ') : '';
+// Live homepage snapshot via WordPress mShots (free, no key, auto-refreshed).
+const live = (url, w) => 'https://s0.wp.com/mshots/v1/' + encodeURIComponent(url) + '?w=' + w;
 const placeholder = name => `<div class="frame placeholder"><span>${esc((name[0] || '?').toLowerCase())}${esc(name[0] || '?')}</span></div>`;
 function imgFallback(img) {
   if (img.dataset.full && img.src !== img.dataset.full) { img.src = img.dataset.full; return; }
@@ -242,10 +244,10 @@ function render(list) {
       </div>
       <div class="grid">${groups[l].map(f => `
         <a class="card" href="${esc(f.url)}" target="_blank" rel="noopener" data-idx="${all.indexOf(f)}">
-          ${f.thumb ? `<div class="frame">
-            <img loading="lazy" src="${esc(f.thumb)}" alt="${esc(f.name)} website"
-                 onerror="imgFallback(this)" data-full="${esc(f.thumb_full)}">
-          </div>` : placeholder(f.name)}
+          <div class="frame">
+            <img loading="lazy" src="${live(f.url, 600)}" alt="${esc(f.name)} website"
+                 onerror="imgFallback(this)" data-full="${esc(f.thumb || '')}">
+          </div>
           <div class="card-line">
             <span class="card-name">${esc(f.name)}</span>
             ${f.founded ? `<span class="card-founded">est. ${esc(f.founded)}</span>` : ''}
@@ -292,9 +294,8 @@ const yn = v => v === 'true' ? 'Yes' : v === 'false' ? 'No' : '';
 const title = s => s ? s.split(/[ -]/).map(w => w[0].toUpperCase() + w.slice(1)).join(' ') : '';
 
 function openPanel(f) {
-  $('#panel .frame').outerHTML = f.thumb
-    ? `<div class="frame"><img id="panel-img" src="${esc(f.thumb_full || f.thumb)}" alt="${esc(f.name)} website" onerror="imgFallback(this)" data-full=""></div>`
-    : placeholder(f.name);
+  $('#panel .frame').outerHTML =
+    `<div class="frame"><img id="panel-img" src="${live(f.url, 1200)}" alt="${esc(f.name)} website" onerror="imgFallback(this)" data-full="${esc(f.thumb || '')}"></div>`;
   $('#panel-name').textContent = f.name;
   $('#panel-url').textContent = f.url.replace(/^https?:\/\/(www\.)?/, '');
   $('#visit').href = f.url;
