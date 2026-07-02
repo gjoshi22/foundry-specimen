@@ -217,7 +217,7 @@ let all = [];
 const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const countryName = s => s ? s.split(' ').map(w => w[0].toUpperCase() + w.slice(1)).join(', ').replace(/-/g, ' ') : '';
 // Live homepage snapshot via WordPress mShots (free, no key, auto-refreshed).
-const live = (url, w) => 'https://s0.wp.com/mshots/v1/' + encodeURIComponent(url) + '?w=' + w;
+const live = (url, w) => 'https://s0.wp.com/mshots/v1/' + encodeURI(url) + '?w=' + w;
 const placeholder = name => `<div class="frame placeholder"><span>${esc((name[0] || '?').toLowerCase())}${esc(name[0] || '?')}</span></div>`;
 function imgFallback(img) {
   if (img.dataset.full && img.src !== img.dataset.full) { img.src = img.dataset.full; return; }
