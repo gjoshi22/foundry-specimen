@@ -241,7 +241,7 @@ function render(list) {
         <span class="letter-count">${groups[l].length} ${groups[l].length === 1 ? 'foundry' : 'foundries'}</span>
       </div>
       <div class="grid">${groups[l].map(f => `
-        <a class="card" href="#" data-idx="${all.indexOf(f)}">
+        <a class="card" href="${esc(f.url)}" target="_blank" rel="noopener" data-idx="${all.indexOf(f)}">
           ${f.thumb ? `<div class="frame">
             <img loading="lazy" src="${esc(f.thumb)}" alt="${esc(f.name)} website"
                  onerror="imgFallback(this)" data-full="${esc(f.thumb_full)}">
@@ -322,6 +322,9 @@ function closePanel() { document.body.classList.remove('panel-open'); }
 $('#main').addEventListener('click', e => {
   const card = e.target.closest('.card');
   if (!card) return;
+  // Plain click opens the detail panel; cmd/ctrl/shift-click and middle-click
+  // fall through to the link and open the foundry site in a new tab.
+  if (e.metaKey || e.ctrlKey || e.shiftKey) return;
   e.preventDefault();
   openPanel(all[+card.dataset.idx]);
 });
