@@ -101,6 +101,9 @@ def _get(url):
     return r.headers.get_content_type(), r.read()
 
 
+ERROR_IMAGE_MD5 = "fddb256cea6d448026d1e98a05d32dc3"  # mShots' own 404 placeholder
+
+
 def fetch_snapshots(foundries, rounds=6, wait=20):
     """Download live homepage previews for foundries missing a local thumb.
     mShots renders on first request, so warm every URL then poll a few rounds."""
@@ -120,7 +123,8 @@ def fetch_snapshots(foundries, rounds=6, wait=20):
             path = THUMBS / (_slug(f["url"]) + ".jpg")
             try:
                 ctype, body = _get(_mshots(f["url"]))
-                if ctype == "image/jpeg" and len(body) > 5000:
+                import hashlib
+                if ctype == "image/jpeg" and len(body) > 5000 and hashlib.md5(body).hexdigest() != ERROR_IMAGE_MD5:
                     path.write_bytes(body)
                     f["thumb_local"] = "thumbs/" + path.name
                 else:
