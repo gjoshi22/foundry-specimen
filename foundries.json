@@ -1,5 +1,5 @@
 {
- "pulled_at": "2026-10-12 14:19:33",
+ "pulled_at": "2026-10-19 12:00:18",
  "count": 394,
  "foundries": [
   {
@@ -3079,7 +3079,7 @@
    "languages": "latin",
    "license_type": "separate",
    "webfonts": "true",
-   "variable_fonts": "false",
+   "variable_fonts": "true",
    "trial_fonts": "true",
    "student_discount": "true",
    "modifications_allowed": "false",
