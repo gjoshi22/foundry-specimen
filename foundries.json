@@ -1,5 +1,5 @@
 {
- "pulled_at": "2026-10-19 12:00:18",
+ "pulled_at": "2026-11-16 14:39:39",
  "count": 394,
  "foundries": [
   {
@@ -1418,7 +1418,7 @@
    "founded": "2017",
    "countries": "italy",
    "languages": "latin",
-   "license_type": "",
+   "license_type": "open-source",
    "webfonts": "true",
    "variable_fonts": "true",
    "trial_fonts": "false",
@@ -1427,7 +1427,7 @@
    "adobe_fonts": "false",
    "fontstand": "false",
    "future_fonts": "false",
-   "instagram": "false",
+   "instagram": "true",
    "thumb_local": "thumbs/www.collletttivo.it.jpg"
   },
   {
